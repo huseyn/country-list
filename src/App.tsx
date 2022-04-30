@@ -1,6 +1,6 @@
-import ProjectList from "components/ProjectList";
+import CountryList from "components/CountryList";
 function App() {
-  return <ProjectList />;
+  return <CountryList />;
 }
 
 export default App;

@@ -1,4 +1,4 @@
-export interface ICountries {
+export interface ICountry {
   name: string;
   region: string;
   area: number;
