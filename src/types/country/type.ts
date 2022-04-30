@@ -4,3 +4,8 @@ export interface ICountry {
   area: number;
   independent: boolean;
 }
+
+export interface ISmallerCountry {
+  area: number;
+  isSmaller: boolean;
+}
