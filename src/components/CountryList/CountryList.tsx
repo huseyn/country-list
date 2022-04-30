@@ -32,6 +32,7 @@ const CountryList = () => {
     area: 65300,
     isSmaller: false,
   });
+  const [isOceaniaArea, setIsOceaniaArea] = useState<boolean>(false);
 
   useEffect(() => {
     setCountries(data);
@@ -52,6 +53,33 @@ const CountryList = () => {
     setFilteredCountries(filteredCountries);
   }, [pagination]);
 
+  useEffect(() => {
+    if (smallerCountries.isSmaller && isOceaniaArea) {
+      const filteredCountries = countries.filter(
+        (country) =>
+          country.area < smallerCountries.area && country.region === "Oceania"
+      );
+      setFilteredCountries(filteredCountries);
+    } else if (smallerCountries.isSmaller && !isOceaniaArea) {
+      const filteredCountries = countries.filter(
+        (country) => country.area < smallerCountries.area
+      );
+      setFilteredCountries(filteredCountries);
+    } else if (!smallerCountries.isSmaller && isOceaniaArea) {
+      const filteredCountries = countries.filter(
+        (country) => country.region === "Oceania"
+      );
+      setFilteredCountries(filteredCountries);
+    } else {
+      const filteredCountries = getCountriesPerPage(
+        pagination.page,
+        pagination.count,
+        data
+      );
+      setFilteredCountries(filteredCountries);
+    }
+  }, [smallerCountries, isOceaniaArea]);
+
   const searchCountryHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const textValue = event.target.value.toLowerCase();
     if (textValue) {
@@ -69,41 +97,6 @@ const CountryList = () => {
       countries
     );
     setFilteredCountries(filteredCountries);
-  };
-
-  const getSmallerCountriesHandler = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const value = event.target.checked;
-    setSmallerCountries({
-      ...smallerCountries,
-      isSmaller: value,
-    });
-
-    if (value) {
-      const filteredCountries = countries.filter(
-        (country) => country.area < smallerCountries.area
-      );
-      setFilteredCountries(filteredCountries);
-      return;
-    }
-
-    setFilteredCountries(countries);
-  };
-
-  const getOceanianCountriesHandler = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const value = event.target.checked;
-    if (value) {
-      const filteredCountries = countries.filter(
-        (country) => country.region === "Oceania"
-      );
-      setFilteredCountries(filteredCountries);
-      return;
-    }
-
-    setFilteredCountries(countries);
   };
 
   const sortAscendingHandler = () => {
@@ -168,13 +161,23 @@ const CountryList = () => {
             control={
               <Checkbox
                 checked={smallerCountries.isSmaller}
-                onChange={getSmallerCountriesHandler}
+                onChange={(event) =>
+                  setSmallerCountries({
+                    ...smallerCountries,
+                    isSmaller: event.target.checked,
+                  })
+                }
               />
             }
             label='Smaller than Lithuania'
           />
           <FormControlLabel
-            control={<Checkbox onChange={getOceanianCountriesHandler} />}
+            control={
+              <Checkbox
+                checked={isOceaniaArea}
+                onChange={(event) => setIsOceaniaArea(event.target.checked)}
+              />
+            }
             label='Located in Oceania'
           />
         </FormGroup>
