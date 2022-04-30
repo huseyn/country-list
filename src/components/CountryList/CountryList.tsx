@@ -8,17 +8,22 @@ import {
   Checkbox,
   FormGroup,
   FormControlLabel,
-  Typography,
+  Pagination,
 } from "@mui/material";
 import useFetch from "hooks/useFetch";
 import Country from "components/Country";
-import { ICountry, ISmallerCountry } from "types/country";
+import { ICountry, ISmallerCountry, IPagination } from "types/country";
+import { getCountriesPerPage } from "helper";
 
 const CountryList = () => {
   const [data, loading, error] = useFetch<ICountry>(
     "https://restcountries.com/v2/all?fields=name,region,area"
   );
   const [countries, setCountries] = useState<ICountry[]>([]);
+  const [pagination, setPagination] = useState<IPagination>({
+    page: 1,
+    count: 10,
+  });
   const [filteredCountries, setFilteredCountries] = useState<ICountry[]>([]);
   const [smallerCountries, setSmallerCountries] = useState<ISmallerCountry>({
     area: 65300,
@@ -27,8 +32,22 @@ const CountryList = () => {
 
   useEffect(() => {
     setCountries(data);
-    setFilteredCountries(data);
+    const filteredCountries = getCountriesPerPage(
+      pagination.page,
+      pagination.count,
+      data
+    );
+    setFilteredCountries(filteredCountries);
   }, [data]);
+
+  useEffect(() => {
+    const filteredCountries = getCountriesPerPage(
+      pagination.page,
+      pagination.count,
+      countries
+    );
+    setFilteredCountries(filteredCountries);
+  }, [pagination]);
 
   const searchCountryHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const textValue = event.target.value.toLowerCase();
@@ -74,6 +93,13 @@ const CountryList = () => {
     setFilteredCountries(countries);
   };
 
+  const paginationHandler = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setPagination({ ...pagination, page: value });
+  };
+
   if (error) {
     return (
       <Stack sx={{ width: "100%" }} spacing={2}>
@@ -101,7 +127,11 @@ const CountryList = () => {
           placeholder='Search country'
           onChange={searchCountryHandler}
         />
-        <Typography variant='h3'>Countries</Typography>
+        <Pagination
+          count={countries.length / pagination.count}
+          page={pagination.page}
+          onChange={paginationHandler}
+        />
         <FormGroup>
           <FormControlLabel
             control={

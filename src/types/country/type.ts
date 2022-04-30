@@ -9,3 +9,8 @@ export interface ISmallerCountry {
   area: number;
   isSmaller: boolean;
 }
+
+export interface IPagination {
+  page: number;
+  count: number;
+}

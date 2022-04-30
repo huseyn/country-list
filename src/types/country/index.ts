@@ -1,1 +1,1 @@
-export type { ICountry , ISmallerCountry} from "./type";
+export type { ICountry, ISmallerCountry, IPagination } from "./type";
