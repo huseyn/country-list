@@ -9,7 +9,10 @@ import {
   FormGroup,
   FormControlLabel,
   Pagination,
+  IconButton,
 } from "@mui/material";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import useFetch from "hooks/useFetch";
 import Country from "components/Country";
 import { ICountry, ISmallerCountry, IPagination } from "types/country";
@@ -103,6 +106,16 @@ const CountryList = () => {
     setFilteredCountries(countries);
   };
 
+  const sortAscendingHandler = () => {
+    setFilteredCountries(countries);
+  };
+
+  const sortDescendingHandler = () => {
+    const copyCountries = [...countries];
+    copyCountries.reverse();
+    setFilteredCountries(copyCountries);
+  };
+
   const paginationHandler = (
     event: React.ChangeEvent<unknown>,
     value: number
@@ -142,6 +155,14 @@ const CountryList = () => {
           page={pagination.page}
           onChange={paginationHandler}
         />
+        <Box display='flex' flexDirection='column'>
+          <IconButton aria-label='settings' onClick={sortAscendingHandler}>
+            <ArrowUpwardIcon />
+          </IconButton>
+          <IconButton aria-label='settings' onClick={sortDescendingHandler}>
+            <ArrowDownwardIcon />
+          </IconButton>
+        </Box>
         <FormGroup>
           <FormControlLabel
             control={
