@@ -51,10 +51,20 @@ const CountryList = () => {
 
   const searchCountryHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const textValue = event.target.value.toLowerCase();
-    const filteredCountries = countries.filter((country) =>
-      country.name.toLowerCase().startsWith(textValue)
-    );
+    if (textValue) {
+      const filteredCountries = countries.filter((country) =>
+        country.name.toLowerCase().startsWith(textValue)
+      );
 
+      setFilteredCountries(filteredCountries);
+      return;
+    }
+
+    const filteredCountries = getCountriesPerPage(
+      pagination.page,
+      pagination.count,
+      countries
+    );
     setFilteredCountries(filteredCountries);
   };
 
